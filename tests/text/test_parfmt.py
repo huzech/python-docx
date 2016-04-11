@@ -12,10 +12,12 @@ from __future__ import (
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.shared import Pt
 from docx.text.parfmt import ParagraphFormat
+from docx.text.tabstops import TabStops
 
 import pytest
 
 from ..unitutil.cxml import element, xml
+from ..unitutil.mock import class_mock, instance_mock
 
 
 class DescribeParagraphFormat(object):
@@ -101,6 +103,17 @@ class DescribeParagraphFormat(object):
         paragraph_format, prop_name, value, expected_xml = on_off_set_fixture
         setattr(paragraph_format, prop_name, value)
         assert paragraph_format._element.xml == expected_xml
+
+    def it_provides_access_to_its_tab_stops(self, tab_stops_fixture):
+        paragraph_format, TabStops_, pPr, tab_stops_ = tab_stops_fixture
+        tab_stops = paragraph_format.tab_stops
+        TabStops_.assert_called_once_with(pPr, paragraph_format)
+        assert tab_stops is tab_stops_
+
+    def it_reuses_the_tab_stops_object(self, tab_stops_lazy_fixture):
+        paragraph_format, initial_tab_stops = tab_stops_lazy_fixture
+        tab_stops = paragraph_format.tab_stops
+        assert tab_stops is initial_tab_stops
 
     # fixtures -------------------------------------------------------
 
@@ -393,3 +406,28 @@ class DescribeParagraphFormat(object):
         paragraph_format = ParagraphFormat(element(p_cxml))
         expected_xml = xml(expected_p_cxml)
         return paragraph_format, value, expected_xml
+
+    @pytest.fixture
+    def tab_stops_fixture(self, TabStops_, tab_stops_):
+        p = element('w:p/w:pPr')
+        pPr = p.pPr
+        paragraph_format = ParagraphFormat(p, None)
+        return paragraph_format, TabStops_, pPr, tab_stops_
+
+    @pytest.fixture
+    def tab_stops_lazy_fixture(self):
+        paragraph_format = ParagraphFormat(element('w:p'), None)
+        original_tab_stops = paragraph_format.tab_stops
+        return paragraph_format, original_tab_stops
+
+    # fixture components ---------------------------------------------
+
+    @pytest.fixture
+    def TabStops_(self, request, tab_stops_):
+        return class_mock(
+            request, 'docx.text.parfmt.TabStops', return_value=tab_stops_
+        )
+
+    @pytest.fixture
+    def tab_stops_(self, request):
+        return instance_mock(request, TabStops)
