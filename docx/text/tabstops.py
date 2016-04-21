@@ -19,9 +19,19 @@ class TabStops(ElementProxy):
     be constructed directly.
     """
 
+    __slots__ = ()
+
+    def __len__(self):
+        tabs = self._element.tabs
+        if tabs is None:
+            return 0
+        return len(tabs.tab_lst)
+
 
 class TabStop(ElementProxy):
     """
     An individual tab stop applying to a paragraph or style. Each of these is
     a member of a set held in a |TabStops| object.
     """
+
+    __slots__ = ()

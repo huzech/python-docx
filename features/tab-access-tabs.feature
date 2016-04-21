@@ -4,7 +4,6 @@ Feature: Adjust tab stops
   I need ways to create, read, update, and remove tab stops
 
 
-  @wip
   Scenario Outline: Count tab stop objects
     Given a tab_stops having <count> tab stops
      Then len(tab_stops) is <count>
