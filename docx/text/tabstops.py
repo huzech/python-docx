@@ -18,3 +18,10 @@ class TabStops(ElementProxy):
     using the `tab_stops` property of ParagraphFormat; it is not intended to
     be constructed directly.
     """
+
+
+class TabStop(ElementProxy):
+    """
+    An individual tab stop applying to a paragraph or style. Each of these is
+    a member of a set held in a |TabStops| object.
+    """
