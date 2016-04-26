@@ -14,7 +14,6 @@ Feature: Adjust tab stops
       | 3     |
 
 
-  @wip
   Scenario: Access an individual tab stops
     Given a tab_stops having 3 tab stops
      Then I can iterate over the tab stop objects it contains
